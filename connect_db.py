@@ -167,46 +167,41 @@ def db_add_player(player: Player):
 
 
 def db_update_player_match_score(player_id: int):
-    try:
-        player = mondb.players.find_one({'player_id': player_id})
-        if player is not None:
-            score = 0
-            jump_score = 0
-            dribbling_score = 0
-            accuracy_score = 0
-            pass_score = 0
-            if player['jump_result'] > 0:
-                _jump = player['jump_result'] - player['player_height']
-                if _jump >= 60:
-                    jump_score = 100
-                else:
-                    jump_score = _jump + 40
+    player = mondb.players.find_one({'player_id': player_id})
+    if player is not None:
+        score = 0
+        jump_score = 0
+        dribbling_score = 0
+        accuracy_score = 0
+        pass_score = 0
+        if player['jump_result'] > 0:
+            _jump = player['jump_result'] - player['player_height']
+            if _jump >= 60:
+                jump_score = 100
+            else:
+                jump_score = _jump + 40
 
-            if player['dribbling_result'] > 0:
-                if player['dribbling_result'] < 8:
-                    dribbling_score = 100
-                for i in range(20):
-                    if player['dribbling_result'] <= (8 + i * 2):
-                        dribbling_score = (100 - i * 5)
-                        break
+        if player['dribbling_result'] > 0:
+            if player['dribbling_result'] < 8:
+                dribbling_score = 100
+            for i in range(20):
+                if player['dribbling_result'] <= (8 + i * 2):
+                    dribbling_score = (100 - i * 5)
+                    break
 
-            if player['accuracy_result'] > 0:
-                if player['accuracy_result'] >= 7:
-                    accuracy_score = 100
-                else:
-                    accuracy_score = 110 - 10 * 8 - player['accuracy_result']
+        if player['accuracy_result'] > 0:
+            if player['accuracy_result'] >= 7:
+                accuracy_score = 100
+            else:
+                accuracy_score = 110 - 10 * 8 - player['accuracy_result']
 
-            if player['pass_result'] > 0:
-                if player['pass_result'] <= 10:
-                    pass_score = player['pass_result'] * 10
+        if player['pass_result'] > 0:
+            if player['pass_result'] <= 10:
+                pass_score = player['pass_result'] * 10
 
-            score = int(jump_score + dribbling_score + accuracy_score + pass_score / 4)
-            mondb.players.update_one({'player_id': player_id}, {'$set': {'match_score': score}})
-            return score
-        else:
-            return 0
-    except:
-        print("ERROR UPDATE PLAYER SCORE")
+        score = int(jump_score + dribbling_score + accuracy_score + pass_score / 4)
+        mondb.players.update_one({'player_id': player_id}, {'$set': {'match_score': score}})
+        return score
 
 def db_update_player_jump_result(player_id: int, jump: int, progress: int):
     try:
