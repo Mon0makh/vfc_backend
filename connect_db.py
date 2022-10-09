@@ -202,13 +202,16 @@ def db_update_player_match_score(player_id: int):
 
             score = int(jump_score + dribbling_score + accuracy_score + pass_score / 4)
             mondb.players.update_one({'player_id': player_id}, {'$set': {'match_score': score}})
+            return score
+        else:
+            return 0
     except:
         print("ERROR UPDATE PLAYER SCORE")
 
 def db_update_player_jump_result(player_id: int, jump: int, progress: int):
     try:
         mondb.players.update_one({'player_id': player_id}, {'$set': {'jump_result': jump, "jump_progress": progress}})
-        db_update_player_match_score(player_id)
+        # db_update_player_match_score(player_id)
         return True
     except:
       print("PLAYER NOT ADDED TO MATCH!")
@@ -219,7 +222,7 @@ def db_update_player_dribbling_result(player_id: int, time: int, progress: int):
     try:
         mondb.players.update_one({'player_id': player_id},
                                  {'$set': {'dribbling_result': time, "dribbling_progress": progress}})
-        db_update_player_match_score(player_id)
+        # db_update_player_match_score(player_id)
         return True
     except:
         print("PLAYER NOT ADDED TO MATCH!")
@@ -230,7 +233,7 @@ def db_update_player_accuracy_result(player_id: int, hits: int, progress: int):
     try:
         mondb.players.update_one({'player_id': player_id},
                                  {'$set': {'accuracy_result': hits, "accuracy_progress": progress}})
-        db_update_player_match_score(player_id)
+        # db_update_player_match_score(player_id)
         return True
     except:
         print("PLAYER NOT ADDED TO MATCH!")
@@ -240,7 +243,7 @@ def db_update_player_accuracy_result(player_id: int, hits: int, progress: int):
 def db_update_player_pass_result(player_id: int, score: int, progress: int):
     try:
         mondb.players.update_one({'player_id': player_id}, {'$set': {'pass_result': score, "pass_progress": progress}})
-        db_update_player_match_score(player_id)
+        # db_update_player_match_score(player_id)
         return True
     except:
         print("PLAYER NOT ADDED TO MATCH!")

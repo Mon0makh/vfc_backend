@@ -4,7 +4,7 @@ from models import Player, JumpRes, AccuRes, DribRes, PassRes, BaseMatch
 from connect_db import db_get_active_match, db_get_match_count, db_add_match, db_add_player_result_to_match, \
     db_update_player_list, db_get_player_by_id, db_del_player_from_match, db_edit_player_status, \
     db_update_player_jump_result, db_update_player_dribbling_result, db_update_player_accuracy_result, db_add_match, \
-    db_update_player_pass_result
+    db_update_player_pass_result, db_update_player_match_score
 from config import GamesSetting
 
 
@@ -110,7 +110,7 @@ class Match():
 
     def get_jump_setting(self):
         setting = {
-            "try_count": GamesSetting.JUMP_TRY_COUNT,
+            "try_count":  str(GamesSetting.JUMP_TRY_COUNT),
             "max_score": 100
         }
         return setting
@@ -147,8 +147,10 @@ class Match():
                 self.players_json[jr.player_id]['jump_progress'] = jump_progress + 1
                 if self.players_json[jr.player_id]['jump_result'] < jr.jump_height:
                     self.players_json[jr.player_id]['jump_result'] = jr.jump_height
-                db_update_player_jump_result(jr.player_id, self.players_json[jr.player_id]['jump_result'],
+                    db_update_player_jump_result(jr.player_id, self.players_json[jr.player_id]['jump_result'],
                                              self.players_json[jr.player_id]['jump_progress'])
+
+                    self.players[jr.player_id]['match_score'] = db_update_player_match_score
                 return self.get_match_json(str(self.players_json[jr.player_id]['jump_progress']) + "/" + str(GamesSetting.JUMP_TRY_COUNT))
             else:
                 return self.get_match_json("Исчерпано количество попыток!")
@@ -164,8 +166,9 @@ class Match():
                 self.players_json[dr.player_id]['dribbling_progress'] = drib_progress + 1
                 if (self.players_json[dr.player_id]['dribbling_result'] > dr.time + dr.cone * 2) or (drib_progress == 0):
                     self.players_json[dr.player_id]['dribbling_result'] = dr.time + dr.cone * 2
-                db_update_player_dribbling_result(dr.player_id, self.players_json[dr.player_id]['dribbling_result'],
+                    db_update_player_dribbling_result(dr.player_id, self.players_json[dr.player_id]['dribbling_result'],
                                                   self.players_json[dr.player_id]['dribbling_progress'])
+                    self.players[dr.player_id]['match_score'] = db_update_player_match_score
                 return self.get_match_json(str(self.players_json[dr.player_id]['dribbling_progress']) + "/" + str(GamesSetting.DRIBBLING_TRY_COUNT))
             else:
                 return self.get_match_json("Исчерпано количество попыток!")
@@ -178,9 +181,11 @@ class Match():
             self.players_json[ar.player_id]['accuracy_progress'] = accu_progress + 1
             if self.players_json[ar.player_id]['accuracy_result'] < ar.hits:
                 self.players_json[ar.player_id]['accuracy_result'] = ar.hits
-            db_update_player_accuracy_result(ar.player_id, self.players_json[ar.player_id]['accuracy_result'],
+                db_update_player_accuracy_result(ar.player_id, self.players_json[ar.player_id]['accuracy_result'],
                                              self.players_json[ar.player_id]['accuracy_progress'])
+                self.players[ar.player_id]['match_score'] = db_update_player_match_score
             return self.get_match_json(str(self.players_json[ar.player_id]['accuracy_progress']) + "/" + str(GamesSetting.ACCURACY_TRY_COUNT))
+
         else:
             return self.get_match_json("Исчерпано количество попыток!")
 
@@ -192,8 +197,9 @@ class Match():
             self.players_json[pr.player_id]['pass_progress'] = pass_progress + 1
             if self.players_json[pr.player_id]['pass_result'] < pr.hits:
                 self.players_json[pr.player_id]['pass_result'] = pr.hits
-            db_update_player_pass_result(pr.player_id, self.players_json[pr.player_id]['pass_result'],
+                db_update_player_pass_result(pr.player_id, self.players_json[pr.player_id]['pass_result'],
                                          self.players_json[pr.player_id]['pass_progress'])
+                self.players[pr.player_id]['match_score'] = db_update_player_match_score
             return self.get_match_json(str(self.players_json[pr.player_id]['pass_progress']) + "/" + str(GamesSetting.PASS_TRY_COUNT))
         else:
             return self.get_match_json("Исчерпано количество попыток!")
