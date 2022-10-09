@@ -3,7 +3,7 @@
 class GamesSetting:
     GAMES_COUNT = 4
 
-    JUMP_TRY_COUNT = 5
+    JUMP_TRY_COUNT = 1
     JUMP_MAX_SCORE = 100
 
     DRIBBLING_TRY_COUNT = 3

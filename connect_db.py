@@ -193,13 +193,13 @@ def db_update_player_match_score(player_id: int):
             if player['accuracy_result'] >= 7:
                 accuracy_score = 100
             else:
-                accuracy_score = 110 - 10 * 8 - player['accuracy_result']
+                accuracy_score = 110 - 10 * (8 - player['accuracy_result'])
 
         if player['pass_result'] > 0:
             if player['pass_result'] <= 10:
                 pass_score = player['pass_result'] * 10
 
-        score = int(jump_score + dribbling_score + accuracy_score + pass_score / 4)
+        score = int((jump_score + dribbling_score + accuracy_score + pass_score) / 4)
         mondb.players.update_one({'player_id': player_id}, {'$set': {'match_score': score}})
         return score
 
