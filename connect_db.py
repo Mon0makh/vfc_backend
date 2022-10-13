@@ -78,6 +78,7 @@ def db_get_player_by_id(id: int):
                 'last_name': player_db['last_name'],
                 'photo_url': player_db['photo_url'],
                 'number': player_db['number'],
+                'player_height': player_db['player_height'],
                 'jump_progress': player_db['jump_progress'],
                 'jump_result': player_db['jump_result'],
                 'dribbling_progress': player_db['dribbling_progress'],
