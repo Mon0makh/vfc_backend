@@ -74,7 +74,7 @@ class Match():
                 "last_name": self.players_json[player]['last_name'],
                 "player_number": self.players_json[player]['number'],
                 "photo_url": self.players_json[player]['photo_url'],
-                "jump": self.players_json[player]['jump_result'],
+                "jump": self.players_json[player]['jump_result'] + self.players_json[player]['player_height'],
                 "jump_progress": str(self.players_json[player]['jump_progress']) + "/" + str(GamesSetting.JUMP_TRY_COUNT),
                 "dribbling": self.players_json[player]['dribbling_result'],
                 "dribbling_progress": str(self.players_json[player]['dribbling_progress']) + "/" + str(

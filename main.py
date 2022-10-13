@@ -15,7 +15,7 @@ from logging import StreamHandler, Formatter
 from admin_auth import login_for_access_token, get_current_active_user
 from models import Token, User, Player, PlayerResultTry, UniqData, JumpRes, AccuRes, DribRes, PassRes
 from data_verification import verify_player, verify_player_id
-from connect_db import check_unique_reg, check_players_update, db_all_matches, db_get_all_fresh_players
+from connect_db import check_unique_reg, check_players_update, db_all_matches, db_get_all_fresh_players, db_get_match
 from match import Match
 from bg_remove import remove_background
 
@@ -113,10 +113,13 @@ async def post_register_player(player: Player):
 
 @app.get("/get_player/")
 def get_player_by_id(id: int):
-    print("!")
     player = verify_player_id(id)
     return player
 
+@app.get("/get_match/")
+def get_player_by_id(id: int):
+    match = db_get_match(id)
+    return match
 
 
 @app.get("/match/")
@@ -142,8 +145,6 @@ def get_match_result():
 def get_start_new_match():
    global this_match
    this_match = Match()
-   print(this_match.get_match_json())
-   print(this_match.get_match_result_json())
    return this_match.get_match_json("New match!")
 
 @app.post("/jump_result/")
