@@ -98,9 +98,14 @@ def db_get_player_by_id(id: int):
 
 def db_get_match(id: int):
     try:
-        match = mondb.matches.find_one({'match_id': id})
-
-        return match
+        match_db = mondb.matches.find_one({'match_id': id})
+        if match_db is not None:
+            match = {
+                'match_id': match_db['match_id'],
+                'players': match_db['players'],
+            }
+            return match
+        return {}
     except:
         return {}
 
