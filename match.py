@@ -140,6 +140,9 @@ class Match():
         return setting
 
     def post_jump_result(self, jr: JumpRes):
+        if jr.jump_height is not None:
+            if jr.jump_height <= 0:
+                return self.get_match_json("Некорректный ID Игрока!")
         if jr.player_id in self.players:
             jump_progress = self.players_json[jr.player_id]['jump_progress']
             if jump_progress < GamesSetting.JUMP_TRY_COUNT:
@@ -158,20 +161,19 @@ class Match():
             return self.get_match_json("Некорректный ID Игрока!")
 
     def post_dribbling_result(self, dr: DribRes):
-        if dr.player_id in self.players:
-            drib_progress = self.players_json[dr.player_id]['dribbling_progress']
+        drib_progress = self.players_json[dr.player_id]['dribbling_progress']
 
-            if drib_progress < GamesSetting.DRIBBLING_TRY_COUNT:
-                self.progress += 1
-                self.players_json[dr.player_id]['dribbling_progress'] = drib_progress + 1
-                if (self.players_json[dr.player_id]['dribbling_result'] > dr.time + dr.cone * 2) or (drib_progress == 0):
-                    self.players_json[dr.player_id]['dribbling_result'] = dr.time + dr.cone * 2
-                    db_update_player_dribbling_result(dr.player_id, self.players_json[dr.player_id]['dribbling_result'],
-                                                  self.players_json[dr.player_id]['dribbling_progress'])
-                    self.players_json[dr.player_id]['match_score'] = db_update_player_match_score(dr.player_id)
-                return self.get_match_json(str(self.players_json[dr.player_id]['dribbling_progress']) + "/" + str(GamesSetting.DRIBBLING_TRY_COUNT))
-            else:
-                return self.get_match_json("Исчерпано количество попыток!")
+        if drib_progress < GamesSetting.DRIBBLING_TRY_COUNT:
+            self.progress += 1
+            self.players_json[dr.player_id]['dribbling_progress'] = drib_progress + 1
+            if (self.players_json[dr.player_id]['dribbling_result'] > (dr.time + dr.cone * 2)) or (self.players_json[dr.player_id]['dribbling_result'] == 0):
+                self.players_json[dr.player_id]['dribbling_result'] = (dr.time + (dr.cone * 2))
+                db_update_player_dribbling_result(dr.player_id, self.players_json[dr.player_id]['dribbling_result'],
+                                              self.players_json[dr.player_id]['dribbling_progress'])
+                self.players_json[dr.player_id]['match_score'] = db_update_player_match_score(dr.player_id)
+            return self.get_match_json(str(self.players_json[dr.player_id]['dribbling_progress']) + "/" + str(GamesSetting.DRIBBLING_TRY_COUNT))
+        else:
+            return self.get_match_json("Исчерпано количество попыток!")
 
     def post_accuracy_result(self, ar: AccuRes):
         accu_progress = self.players_json[ar.player_id]['accuracy_progress']
