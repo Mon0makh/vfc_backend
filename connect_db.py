@@ -186,16 +186,15 @@ def db_update_player_match_score(player_id: int):
         accuracy_score = 0
         pass_score = 0
         if player['jump_result'] > 0:
-            if player['jump_result'] >= 60:
-                jump_score = 100
-            else:
-                jump_score = player['jump_result'] + 40
-
-        # _jump = player['jump_result'] - player['player_height']
-            # if _jump >= 60:
+            # if player['jump_result'] >= 60:
             #     jump_score = 100
             # else:
-            #     jump_score = _jump + 40
+            #     jump_score = player['jump_result'] + 40
+            _jump = player['jump_result'] - player['player_height']
+            if _jump >= 60:
+                jump_score = 100
+            else:
+                jump_score = _jump + 40
 
         if player['dribbling_result'] > 0:
             if player['dribbling_result'] < 8:
